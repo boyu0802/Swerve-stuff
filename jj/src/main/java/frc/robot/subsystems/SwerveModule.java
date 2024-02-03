@@ -6,6 +6,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkLowLevel;
@@ -24,6 +25,7 @@ import frc.robot.Constants.AngleConstants;
 public class SwerveModule {
      private final VelocityVoltage velocity = new VelocityVoltage(0);
      private final DutyCycleOut driveDutyCycle = new DutyCycleOut(0);
+
      private final CANSparkMax angleMotor;
      private final TalonFX driveMotor;
      private final CANcoder cancoder;
@@ -61,12 +63,13 @@ public class SwerveModule {
      }
      public void setAngle(SwerveModuleState state){
           Rotation2d angle = (Math.abs(state.speedMetersPerSecond)<= (Constants.ChassisConstants.Max_Speed*0.01)) ? lastAngle : state.angle;
+
           angleMotor.getPIDController().setReference(angle.getDegrees(), CANSparkBase.ControlType.kPosition);
           lastAngle = angle;
      }
 
      public void setState(SwerveModuleState swerveModuleState, boolean isOpenLoop){
-           SwerveModuleState state = ModuleStates.optimize(swerveModuleState, getCancoder());
+           SwerveModuleState state = ModuleStates.optimized(swerveModuleState, getCancoder());
            setSpeed(state, isOpenLoop);
            setAngle(state);
 
@@ -74,6 +77,7 @@ public class SwerveModule {
      public Rotation2d getCancoder(){
           return Rotation2d.fromDegrees(Conversion.cancoderToDegrees(cancoder.getAbsolutePosition().getValue()));
      }
+
 
 
 
@@ -87,16 +91,11 @@ public class SwerveModule {
 
 
      public void resetToAbsolute(){
-          double angle = getCancoder().getDegrees() - angleOffset.getDegrees();
-          angle = angle%360;
-          if(angle < 0){
-               angle+= 360;
-          }
+          angleMotor.getEncoder().setPosition(getCancoder().getDegrees() - angleOffset.getDegrees());
+//          SmartDashboard.putNumber("anglemotor set position to:", getCancoder().getDegrees() - angleOffset.getDegrees());
+//          SmartDashboard.putNumber("angle offset: ", angleOffset.getDegrees() );
+//          SmartDashboard.putNumber("cancoder degrees", getCancoder().getDegrees());
 
-          angleMotor.getEncoder().setPosition(angle);
-
-//          angleMotor.getEncoder().setPosition(0);
-//          angleMotor.getEncoder().setPosition(getCancoder().getDegrees());
      }
 
 
@@ -126,7 +125,7 @@ public class SwerveModule {
           angleMotor.setIdleMode(CANSparkBase.IdleMode.kBrake);
           angleMotor.setInverted(SwerveTypeConstants.SDSMK4I_L1().angleMotorInvert);
           angleMotor.getEncoder().setPositionConversionFactor(360/SwerveTypeConstants.SDSMK4I_L1().angleGearRatio);
-          resetToAbsolute();
+//          angleMotor.getEncoder().setPosition(0);
           angleMotor.burnFlash();
      }
 
@@ -147,7 +146,7 @@ public class SwerveModule {
           driveMotorConfig.CurrentLimits.SupplyCurrentThreshold = Constants.DriveConstants.Drive_Supply_Current_Threshold;
           driveMotorConfig.CurrentLimits.SupplyCurrentLimit = Constants.DriveConstants.Drive_Suppy_Current_Limit;
           driveMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = Constants.DriveConstants.Drive_Current_Limit_Enable;
-          driveMotor.setPosition(0);
+//          driveMotor.setPosition(0);
           driveMotorConfig.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = Constants.DriveConstants.Drive_Closed_Loop_Ramp;
           driveMotorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = Constants.DriveConstants.Drive_Closed_Loop_Ramp;
           driveMotorConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = Constants.DriveConstants.Drive_Open_Loop_Ramp;
@@ -157,15 +156,15 @@ public class SwerveModule {
 
      public void configCanCoder(){
           CANcoderConfiguration cancoderConfig = new CANcoderConfiguration();
-          cancoderConfig.MagnetSensor.SensorDirection = Constants.CancoderConstants.Cancoder_Inverted;
-//          cancoderConfig.MagnetSensor.MagnetOffset = angleOffset.getRotations();
+          cancoderConfig.MagnetSensor.SensorDirection = SwerveTypeConstants.SDSMK4I_L1().CANCODERInvert;
+          cancoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
+//          SmartDashboard.putNumber("angle motor suppose to be 0",angleMotor.getEncoder().getPosition());
+//          cancoderConfig.MagnetSensor.MagnetOffset = (angleMotor.getEncoder().getPosition())/360;
+//          cancoder.setPosition(0);
+
+
           cancoder.getConfigurator().apply(cancoderConfig);
      }
-
-
-
-
-
 }
 
 
