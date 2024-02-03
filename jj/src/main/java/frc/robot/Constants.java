@@ -5,7 +5,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.util.Units;
 
 /**
@@ -63,11 +62,5 @@ public final class Constants
 //        public static final double Angle_Allowed_Err = .0;
         public static final double Angle_Voltage_Compensation = 12.0;
         public static final int Angle_Current_limit = 35;
-    }
-
-    public static class CancoderConstants{
-        public static final SensorDirectionValue Cancoder_Inverted = SensorDirectionValue.Clockwise_Positive;
-
-
     }
 }
