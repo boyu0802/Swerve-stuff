@@ -43,7 +43,6 @@ public class RobotContainer
                 .onTrue(new InstantCommand(swerveSubsystem::zeroGyro));
 
 
-        new JoystickButton(controller, XboxController.Button.kRightBumper.value).onTrue(new InstantCommand(swerveSubsystem::resetModulesToAbsolute));
     }
 }
     
