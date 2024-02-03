@@ -1,4 +1,4 @@
-// Copyright (c) FIRST and other WPILib contributors.
+/ Copyright (c) FIRST and other WPILib contributors.
 
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -10,8 +10,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
@@ -56,6 +54,7 @@ public class SwerveSubsystem extends SubsystemBase {
                         RobotMap.Back_Left_Angle_Offset
                 ),
 
+
                 new SwerveModule(
                         RobotMap.Back_Right_Drive_Motor_ID,
                         RobotMap.Back_Right_Angle_Motor_ID,
@@ -70,7 +69,8 @@ public class SwerveSubsystem extends SubsystemBase {
                         RobotMap.Front_Right_Angle_Offset
                 )
         };
-        Timer.delay(1);
+
+
         resetModulesToAbsolute();
         odometry = new SwerveDriveOdometry(kinematics,getYaw(),getModulePosition());
     }
@@ -95,12 +95,12 @@ public class SwerveSubsystem extends SubsystemBase {
 
 
     public void resetModulesToAbsolute(){
-        for(var i = 0; i<4; i++){
+        for(var i = 0; i<4; i++) {
             swerveModules[i].resetToAbsolute();
-            SmartDashboard.putNumber("FLangleoffset",RobotMap.Front_Left_Angle_Offset.getDegrees());
-            SmartDashboard.putNumber("BLangleOffset", RobotMap.Back_Left_Angle_Offset.getDegrees());
-            SmartDashboard.putNumber("BRangleOffset", RobotMap.Back_Right_Angle_Offset.getDegrees());
-            SmartDashboard.putNumber("FRangleOffset",RobotMap.Front_Right_Angle_Offset.getDegrees());
+//            SmartDashboard.putNumber("FLangleoffset",RobotMap.Front_Left_Angle_Offset.getDegrees());
+//            SmartDashboard.putNumber("BLangleOffset", RobotMap.Back_Left_Angle_Offset.getDegrees());
+//            SmartDashboard.putNumber("BRangleOffset", RobotMap.Back_Right_Angle_Offset.getDegrees());
+//            SmartDashboard.putNumber("FRangleOffset",RobotMap.Front_Right_Angle_Offset.getDegrees());
         }
     }
 
@@ -125,20 +125,22 @@ public class SwerveSubsystem extends SubsystemBase {
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop){
             SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates( fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(translation.getX(),translation.getY(),rotation,Navx.getRotation2d()) : new ChassisSpeeds(translation.getX(),translation.getY(),rotation));
             SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates,ChassisConstants.Max_Speed);
-            for(int i = 0; i< 4; i ++){
-                swerveModules[i].setState(moduleStates[i],isOpenLoop);
+            for(int i = 0; i< 4; i ++) {
+                swerveModules[i].setState(moduleStates[i], isOpenLoop);
+//                SmartDashboard.putNumber("set state" + i, moduleStates[i].angle.getDegrees());
             }
     }
 
     @Override
     public void periodic() {
-        odometry.update(getYaw(),getModulePosition());
-        for (var i = 0; i < 4; i++) {
-            // SmartDashboard.putNumber("CanCoder"+ i + "Degrees", swerveModules[i].getCancoder().getDegrees());
-            SmartDashboard.putNumber("CANCoder " + i + " Degrees", swerveModules[i].getCancoder().
-            SmartDashboard.putNumber("AngleEncoder" + i + "Degrees", swerveModules[i].getAngle().getDegrees());
-            SmartDashboard.putNumber("DriveEncoder" + i + "Meters", swerveModules[i].getState().speedMetersPerSecond);
-        }
+        odometry.update(getYaw(), getModulePosition());
+//        for (var i = 0; i < 4; i++) {
+//             SmartDashboard.putNumber("CanCoder"+ i + "Degrees", swerveModules[i].getCancoder().getDegrees());
+////            SmartDashboard.putNumber("CANCoder " + i + " Degrees", swerveModules[i].getCancoder().
+//            SmartDashboard.putNumber("AngleEncoder" + i + "Degrees", swerveModules[i].getAngle().getDegrees());
+//            SmartDashboard.putNumber("DriveEncoder" + i + "Meters", swerveModules[i].getState().speedMetersPerSecond);
+//        }
     }
 
 }
+
