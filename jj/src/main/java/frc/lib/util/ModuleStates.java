@@ -2,15 +2,17 @@ package frc.lib.util;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-
 public class ModuleStates {
-    public static SwerveModuleState optimize(SwerveModuleState desiredState, Rotation2d currentAngle) {
+    public static SwerveModuleState optimized(SwerveModuleState desiredState, Rotation2d currentAngle) {
         double targetAngle = placeInAppropriate0To360Scope(currentAngle.getDegrees(), desiredState.angle.getDegrees());
         double targetSpeed = desiredState.speedMetersPerSecond;
         double delta = targetAngle - currentAngle.getDegrees();
         if (Math.abs(delta) > 90){
             targetSpeed = -targetSpeed;
-            targetAngle = delta > 90 ? (targetAngle -= 180) : (targetAngle += 180);
+            targetAngle = delta > 90 ? (targetAngle - 180) : (targetAngle + 180);
+            System.out.println("delta: " + delta);
+            System.out.println("targetAngle:" + targetAngle);
+            return new SwerveModuleState(targetSpeed, Rotation2d.fromDegrees(targetAngle));
         }
         return new SwerveModuleState(targetSpeed, Rotation2d.fromDegrees(targetAngle));
     }
@@ -37,6 +39,9 @@ public class ModuleStates {
         } else if (newAngle - scopeReference < -180) {
             newAngle += 360;
         }
+        System.out.println("upperBound: " + upperBound);
+        System.out.println("lowerBound: " + lowerBound);
+        System.out.println("newAngle: " + newAngle);
         return newAngle;
     }
 }
