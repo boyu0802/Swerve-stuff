@@ -10,6 +10,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
@@ -29,7 +31,8 @@ public class SwerveSubsystem extends SubsystemBase {
     public SwerveSubsystem() {
 
         Navx = new AHRS(SerialPort.Port.kMXP);
-        zeroGyro();
+        Navx.reset();
+
 
         kinematics = new SwerveDriveKinematics(
                 new Translation2d(ChassisConstants.Chassis_Length / 2, ChassisConstants.Chassis_Width / 2),
@@ -69,7 +72,7 @@ public class SwerveSubsystem extends SubsystemBase {
                         RobotMap.Front_Right_Angle_Offset
                 )
         };
-
+        Timer.delay(1);
 
         resetModulesToAbsolute();
         odometry = new SwerveDriveOdometry(kinematics,getYaw(),getModulePosition());
@@ -123,7 +126,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop){
-            SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates( fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(translation.getX(),translation.getY(),rotation,Navx.getRotation2d()) : new ChassisSpeeds(translation.getX(),translation.getY(),rotation));
+            SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates( fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(translation.getX(),-translation.getY(),rotation,getYaw()) : new ChassisSpeeds(translation.getX(),-translation.getY(),rotation));
             SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates,ChassisConstants.Max_Speed);
             for(int i = 0; i< 4; i ++) {
                 swerveModules[i].setState(moduleStates[i], isOpenLoop);
@@ -134,13 +137,12 @@ public class SwerveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         odometry.update(getYaw(), getModulePosition());
-//        for (var i = 0; i < 4; i++) {
-//             SmartDashboard.putNumber("CanCoder"+ i + "Degrees", swerveModules[i].getCancoder().getDegrees());
+        for (var i = 0; i < 4; i++) {
+             SmartDashboard.putNumber("CanCoder"+ i + "Degrees", swerveModules[i].getCancoder().getDegrees());
 ////            SmartDashboard.putNumber("CANCoder " + i + " Degrees", swerveModules[i].getCancoder().
-//            SmartDashboard.putNumber("AngleEncoder" + i + "Degrees", swerveModules[i].getAngle().getDegrees());
-//            SmartDashboard.putNumber("DriveEncoder" + i + "Meters", swerveModules[i].getState().speedMetersPerSecond);
-//        }
+            SmartDashboard.putNumber("AngleEncoder" + i + "Degrees", swerveModules[i].getAngle().getDegrees());
+            SmartDashboard.putNumber("DriveEncoder" + i + "Meters", swerveModules[i].getState().speedMetersPerSecond);
+        }
     }
 
 }
-

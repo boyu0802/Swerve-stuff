@@ -28,10 +28,14 @@ public class RobotContainer
         swerveSubsystem.setDefaultCommand(
                 new SwerveCommand(
                         swerveSubsystem,
-                        () ->controller.getLeftY(),
-                        () ->controller.getLeftX(),
-                        () ->controller.getRightX(),
-                        () ->controller.getRightBumper()
+                        () ->controller.getRawAxis(XboxController.Axis.kLeftY.value),
+                        () -> -controller.getRawAxis(XboxController.Axis.kLeftX.value),
+                        () -> -controller.getRawAxis(XboxController.Axis.kRightX.value),
+                        () ->controller.getRightBumper(),
+                        () ->controller.getAButton()
+
+
+
                 )
         );
 
@@ -43,6 +47,7 @@ public class RobotContainer
                 .onTrue(new InstantCommand(swerveSubsystem::zeroGyro));
 
 
+//        new JoystickButton(controller, XboxController.Button.kRightBumper.value).onTrue(new InstantCommand(swerveSubsystem::resetModulesToAbsolute));
     }
 }
     

@@ -41,7 +41,7 @@ public final class Constants
         public static final double Drive_Ka = 0.27/ChassisConstants.Max_Voltage;
         public static final double Drive_Kv = 1.51/ ChassisConstants.Max_Voltage;
 
-        public static final double Drive_Kp =0.05;
+        public static final double Drive_Kp =0.1;
         public static final double Drive_Ki = 0.0;
         public static final double Drive_Kd =0.0;
 
@@ -51,7 +51,7 @@ public final class Constants
 
         public static final boolean Drive_Current_Limit_Enable = true;
         public static final double Drive_Closed_Loop_Ramp = 0.0;
-        public static final double Drive_Open_Loop_Ramp = 0.25;
+        public static final double Drive_Open_Loop_Ramp = 0.5;
 
     }
 

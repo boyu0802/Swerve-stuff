@@ -23,15 +23,17 @@ public class SwerveCommand extends Command
     private final DoubleSupplier ySpeed;
     private final DoubleSupplier rot;
     private final BooleanSupplier fieldRelative;
+    private final BooleanSupplier openloop;
 
 
-    public SwerveCommand(SwerveSubsystem swerveSubsystem, DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier rot, BooleanSupplier fieldRelative)
+    public SwerveCommand(SwerveSubsystem swerveSubsystem, DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier rot, BooleanSupplier fieldRelative, BooleanSupplier openloop)
     {
         this.swerveSubsystem = swerveSubsystem;
         this.xSpeed = xSpeed;
         this.ySpeed = ySpeed;
         this.rot = rot;
         this.fieldRelative = fieldRelative;
+        this.openloop = openloop;
         addRequirements(swerveSubsystem);
     }
 
@@ -45,7 +47,7 @@ public class SwerveCommand extends Command
         swerveSubsystem.drive(
                 new Translation2d(x, y).times(Constants.ChassisConstants.Max_Speed),
                 z * Constants.ChassisConstants.Max_Speed,
-                fieldRelative.getAsBoolean(),true);
+                !fieldRelative.getAsBoolean(),true);
     }
 
 

@@ -7,6 +7,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkLowLevel;
@@ -47,7 +48,8 @@ public class SwerveModule {
           configAngleMotor();
           configDriveMotor();
           configCanCoder();
-
+          resetToAbsolute();
+          
      }
 
      public void setSpeed(SwerveModuleState state, boolean isOpenLoop){
@@ -69,7 +71,7 @@ public class SwerveModule {
      }
 
      public void setState(SwerveModuleState swerveModuleState, boolean isOpenLoop){
-           SwerveModuleState state = ModuleStates.optimized(swerveModuleState, getCancoder());
+           SwerveModuleState state = ModuleStates.optimized(swerveModuleState, getState().angle);
            setSpeed(state, isOpenLoop);
            setAngle(state);
 
@@ -133,7 +135,7 @@ public class SwerveModule {
           driveMotor.getConfigurator().apply(new TalonFXConfiguration());
 
           TalonFXConfiguration driveMotorConfig = new TalonFXConfiguration();
-          driveMotor.setInverted(SwerveTypeConstants.SDSMK4I_L1().driveMotorInvert);
+          driveMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
           driveMotor.setNeutralMode(NeutralModeValue.Brake);
           driveMotorConfig.Feedback.SensorToMechanismRatio = SwerveTypeConstants.SDSMK4I_L1().driveGearRatio;
           driveMotorConfig.Slot0.kP = Constants.DriveConstants.Drive_Kp;
@@ -165,6 +167,11 @@ public class SwerveModule {
 
           cancoder.getConfigurator().apply(cancoderConfig);
      }
+
+
+
+
+
 }
 
 

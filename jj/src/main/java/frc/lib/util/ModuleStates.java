@@ -10,9 +10,8 @@ public class ModuleStates {
         if (Math.abs(delta) > 90){
             targetSpeed = -targetSpeed;
             targetAngle = delta > 90 ? (targetAngle - 180) : (targetAngle + 180);
-            System.out.println("delta: " + delta);
-            System.out.println("targetAngle:" + targetAngle);
-            return new SwerveModuleState(targetSpeed, Rotation2d.fromDegrees(targetAngle));
+//            System.out.println("delta: " + delta);
+//            System.out.println("targetAngle:" + targetAngle);
         }
         return new SwerveModuleState(targetSpeed, Rotation2d.fromDegrees(targetAngle));
     }
@@ -39,9 +38,9 @@ public class ModuleStates {
         } else if (newAngle - scopeReference < -180) {
             newAngle += 360;
         }
-        System.out.println("upperBound: " + upperBound);
-        System.out.println("lowerBound: " + lowerBound);
-        System.out.println("newAngle: " + newAngle);
+//        System.out.println("upperBound: " + upperBound);
+//        System.out.println("lowerBound: " + lowerBound);
+//        System.out.println("newAngle: " + newAngle);
         return newAngle;
     }
 }
